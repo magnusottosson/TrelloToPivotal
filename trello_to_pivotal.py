@@ -11,19 +11,22 @@ import re
 # Maps a list to state of the item.
 # Cards will not be in the output if their list is not mapped.
 # Use state 'unscheduled' to put in the icebox.
-ALIASES = { 
-    'Todo':'unstarted', # Backlog
-    'InProgess':'started', 
-    'Testing':'finished',
-    'Completed':'accepted',
+ALIASES = {
+    'Icebox':'unscheduled',  # Icebox
+    'Backlog':'unstarted',   # Backlog
+    'Started':'started',     # Current
+    'Finished':'finished',   # Finished
+    'Delivered':'delivered', # Delivered
+    'Accepted':'accepted',   # Accepted
 }
 
 # Anything that has started needs an estimate.
 # The default is -1, unestimated.
-ESTIMATES = { 
-    'InProgess': 2,
-    'Testing': 2,
-    'Completed': 2,
+ESTIMATES = {
+    'Started': 1,
+    'Finished': 1,
+    'Delivered': 1,
+    'Accepted': 1,
 }
 
 with file(sys.argv[1]) as f:
@@ -88,7 +91,7 @@ for page, cards in enumerate(paginate(board['cards'], 100)):
             current_state = ALIASES[list]
             estimate =    ESTIMATES.get(list, -1)
 
-            labels = [label['name'] for label in card['labels']]
+            labels = [label['name'] for label in card['labels']] + ["trello","board_name"]
             if not list in ALIASES:
                 labels+=[list]
 

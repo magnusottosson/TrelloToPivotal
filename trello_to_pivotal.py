@@ -71,7 +71,7 @@ def labelToState(labels):
         if label in STORY_TYPES:
             return STORY_TYPES[label]
         else:
-            return 'default'
+            return 'feature'
 
 max_num_tasks = 0
 for card in board['cards']:

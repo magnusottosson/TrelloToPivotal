@@ -12,21 +12,28 @@ import re
 # Cards will not be in the output if their list is not mapped.
 # Use state 'unscheduled' to put in the icebox.
 ALIASES = {
-    'Icebox':'unscheduled',  # Icebox
-    'Backlog':'unstarted',   # Backlog
-    'Started':'started',     # Current
-    'Finished':'finished',   # Finished
-    'Delivered':'delivered', # Delivered
-    'Accepted':'accepted',   # Accepted
+    'icebox':'unscheduled',  # Icebox
+    'backlog':'unstarted',   # Backlog
+    'started':'started',     # Current
+    'finished':'finished',   # Finished
+    'delivered to staging':'delivered', # Delivered
+    'deployed to [demo,hq,ki]':'accepted',   # Accepted
+}
+
+STORY_TYPES = {
+   '#bug':'bug',         #Bug
+   '#chore':'chore',     #Chore
+   '#release':'release', #Release
+   '#feature':'feature', #Feature
 }
 
 # Anything that has started needs an estimate.
 # The default is -1, unestimated.
 ESTIMATES = {
-    'Started': 1,
-    'Finished': 1,
-    'Delivered': 1,
-    'Accepted': 1,
+    'started': 1,
+    'finished': 1,
+    'delivered': 1,
+    'accepted': 1,
 }
 
 with file(sys.argv[1]) as f:
@@ -58,6 +65,13 @@ def sluggify(string):
 
 def paginate(L, num):
     return [L[i*num : (i+1)*num] for i in range((len(L)/num)+1) if L[i*num : (i+1)*num]]
+
+def labelToState(labels):
+    for label in labels:
+        if label in STORY_TYPES:
+            return STORY_TYPES[label]
+        else:
+            return 'default'
 
 max_num_tasks = 0
 for card in board['cards']:
@@ -115,7 +129,7 @@ for page, cards in enumerate(paginate(board['cards'], 100)):
                    owner.encode("utf-8"),
                    ','.join(labels),
                    current_state,
-                   'feature',
+                   labelToState(labels),
                    estimate]+tasks
             writer.writerow(row)
 

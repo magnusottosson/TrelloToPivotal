@@ -28,6 +28,14 @@ ALIASES = {
 	'deployed to [demo,hq,ki]':'accepted',   # Accepted
 }
 
+ALIAS_TO_LABELS = {
+	'QA / Bugs':'QA / Bugs',   # Backlog
+	'Sprint bug/6 (prioritized) ':'Sprint 6',
+	'Peering':'Peering',
+	'Design review':'Design review',
+	'Testing':'Testing'
+}
+
 STORY_TYPES = {
    '#bug':'bug',         #Bug
    '#chore':'chore',     #Chore
@@ -143,6 +151,10 @@ for page, cards in enumerate(paginate(board['cards'], 100)):
 			labels = [label['name'] for label in card['labels']]
 			if not list in ALIASES:
 				labels+=[list]
+
+			if list in ALIAS_TO_LABELS:
+				alias_label = ALIAS_TO_LABELS.get(list, '')
+				labels+=[alias_label]
 
 			orig_description = card.get('desc', '')
 			description = orig_description+'\n' if orig_description else ''
